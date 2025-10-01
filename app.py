@@ -262,13 +262,19 @@ class PhishingDetector:
     
     def load_model(self, model_path):
         try:
-            with open(model_path, 'rb') as f:
-                model_data = pickle.load(f)
-            self.models = model_data['models']
-            self.feature_names = model_data['feature_names']
-            print("✅ Model loaded successfully")
-        except FileNotFoundError:
-            print(f"❌ Model file {model_path} not found")
+            # Try to load the model, but if it fails, use rule-based fallback
+            if os.path.exists(model_path):
+                with open(model_path, 'rb') as f:
+                    model_data = pickle.load(f)
+                self.models = model_data['models']
+                self.feature_names = model_data['feature_names']
+                print("✅ ML Model loaded successfully")
+            else:
+                raise FileNotFoundError("Model file not found")
+                
+        except Exception as e:
+            print(f"❌ Model loading failed: {e}")
+            print("🔄 Using rule-based fallback detection")
             self.models = {'ensemble': self.create_fallback_model()}
             self.feature_names = [
                 'NumDots', 'SubdomainLevel', 'UrlLength', 'NoHttps', 'EmbeddedBrandName',
@@ -276,12 +282,42 @@ class PhishingDetector:
             ]
     
     def create_fallback_model(self):
-        from sklearn.ensemble import RandomForestClassifier
-        model = RandomForestClassifier(n_estimators=10, random_state=42)
-        X_dummy = np.zeros((10, len(self.feature_names)))
-        y_dummy = np.zeros(10)
-        model.fit(X_dummy, y_dummy)
-        return model
+        # Simple rule-based model that doesn't require complex dependencies
+        class RuleBasedModel:
+            def predict(self, features_df):
+                predictions = []
+                for _, row in features_df.iterrows():
+                    # Rule-based logic
+                    score = 0
+                    
+                    # High risk indicators
+                    if row.get('EmbeddedBrandName', 0) == 1:
+                        score += 3
+                    if row.get('HasAtObfuscation', 0) == 1:
+                        score += 3
+                    if row.get('HomoglyphScore', 0) > 2:
+                        score += 2
+                    if row.get('HasSuspiciousTLD', 0) == 1:
+                        score += 2
+                    if row.get('NoHttps', 0) == 1:
+                        score += 1
+                    
+                    # Predict based on score
+                    predictions.append(1 if score >= 3 else 0)
+                
+                return np.array(predictions)
+            
+            def predict_proba(self, features_df):
+                predictions = self.predict(features_df)
+                probas = []
+                for pred in predictions:
+                    if pred == 1:
+                        probas.append([0.2, 0.8])  # [legit_prob, phishing_prob]
+                    else:
+                        probas.append([0.8, 0.2])
+                return np.array(probas)
+        
+        return RuleBasedModel()
     
     def predict(self, features_dict):
         if not self.models:
@@ -307,6 +343,7 @@ class PhishingDetector:
             }
         except Exception as e:
             print(f"Prediction error: {e}")
+            # Enhanced fallback logic
             homoglyph_score = features_dict.get('HomoglyphScore', 0)
             has_embedded_brand = features_dict.get('EmbeddedBrandName', 0)
             is_legitimate = features_dict.get('IsLegitimateDomain', 0)
