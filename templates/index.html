@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureScan - Phishing URL Detector</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-shield-check"></i>
+                <span>SecureScan</span>
+            </div>
+            <div class="nav-actions">
+                <button class="theme-btn" id="themeBtn">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    AI-Powered
+                    <span class="gradient-text">Phishing Detection</span>
+                </h1>
+                <p class="hero-description">
+                    Protect yourself from malicious URLs with our advanced machine learning system. 
+                    Real-time analysis of homoglyph attacks, suspicious patterns, and phishing attempts.
+                </p>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <div class="stat-number">99.8%</div>
+                        <div class="stat-label">Accuracy</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">50ms</div>
+                        <div class="stat-label">Avg. Response</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">1M+</div>
+                        <div class="stat-label">URLs Analyzed</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Scanner Section -->
+    <section class="scanner">
+        <div class="container">
+            <div class="scanner-card">
+                <div class="scanner-header">
+                    <h2><i class="fas fa-radar"></i> URL Security Scanner</h2>
+                    <div class="tab-switcher">
+                        <button class="tab-btn active" data-tab="single">
+                            <i class="fas fa-link"></i> Single URL
+                        </button>
+                        <button class="tab-btn" data-tab="batch">
+                            <i class="fas fa-layer-group"></i> Batch Scan
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Single URL Tab -->
+                <div class="tab-content active" id="singleTab">
+                    <div class="input-group">
+                        <div class="input-icon">
+                            <i class="fas fa-globe"></i>
+                        </div>
+                        <input type="text" id="urlInput" placeholder="Enter URL to analyze (e.g., https://example.com/login)" autocomplete="off">
+                        <button class="input-clear" id="clearSingle">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <button class="scan-btn" id="analyzeBtn">
+                        <i class="fas fa-shield-alt"></i>
+                        Scan URL Security
+                    </button>
+                </div>
+
+                <!-- Batch URL Tab -->
+                <div class="tab-content" id="batchTab">
+                    <div class="textarea-group">
+                        <textarea id="batchUrls" placeholder="Enter URLs to analyze (one per line)&#10;Example:&#10;https://example.com&#10;https://test-site.org&#10;https://secure-login.com"></textarea>
+                    </div>
+                    <div class="batch-actions">
+                        <button class="scan-btn" id="batchAnalyzeBtn">
+                            <i class="fas fa-tasks"></i>
+                            Analyze Multiple URLs
+                        </button>
+                        <button class="clear-btn" id="clearBatch">
+                            <i class="fas fa-broom"></i>
+                            Clear All
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Loading State -->
+                <div class="loading-state" id="loading">
+                    <div class="pulse-loader">
+                        <div class="pulse-dot"></div>
+                        <div class="pulse-dot"></div>
+                        <div class="pulse-dot"></div>
+                    </div>
+                    <p>Analyzing security features...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results Section -->
+    <section class="results" id="resultsSection">
+        <div class="container">
+            <div class="results-header">
+                <h2><i class="fas fa-chart-network"></i> Analysis Results</h2>
+                <div class="results-actions">
+                    <button class="export-btn" id="exportResults">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                    <button class="clear-results-btn" id="clearResults">
+                        <i class="fas fa-trash"></i> Clear
+                    </button>
+                </div>
+            </div>
+
+            <!-- Single Result -->
+            <div id="singleResult"></div>
+
+            <!-- Batch Results -->
+            <div id="batchResults" class="batch-results"></div>
+
+            <!-- Empty State -->
+            <div class="empty-state" id="noResults">
+                <div class="empty-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <h3>Ready to Scan</h3>
+                <p>Enter a URL above to start security analysis</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <h2 class="section-title">Advanced Protection Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>AI Detection</h3>
+                    <p>Machine learning models trained on millions of phishing patterns and legitimate URLs</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-font"></i>
+                    </div>
+                    <h3>Homoglyph Analysis</h3>
+                    <p>Detects character substitution attacks and internationalized domain name spoofing</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3>Real-time Scanning</h3>
+                    <p>Instant analysis with comprehensive risk assessment and detailed breakdown</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-virus"></i>
+                    </div>
+                    <h3>Multi-layer Security</h3>
+                    <p>Combines URL structure analysis, brand impersonation detection, and behavioral patterns</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <i class="fas fa-shield-check"></i>
+                    <span>SecureScan</span>
+                </div>
+                <p>Advanced phishing detection powered by machine learning and real-time threat intelligence</p>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 SecureScan. Protecting users from phishing threats.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
